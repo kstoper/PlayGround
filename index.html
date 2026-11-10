@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f6f0e8" />
+  <title>Дома — семейный симулятор</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+    :root{--paper:#f6f0e8;--ink:#272723;--muted:#77766f;--red:#c65043;--line:#ded7cd;--card:#fffdf9;--olive:#727b5b}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh}
+    button,input{font:inherit} button{cursor:pointer}
+    .shell{max-width:1180px;margin:auto;padding:28px 44px 30px}
+    header{height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:18px}
+    .brand{display:flex;align-items:center;gap:11px;font-size:15px;font-weight:700;letter-spacing:-.3px}.brand-mark{width:30px;height:30px;background:var(--red);border-radius:50%;display:grid;place-items:center;color:#fff;font-size:15px}
+    .top-note{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.menu-button{border:1px solid var(--line);border-radius:999px;background:transparent;padding:10px 15px;display:flex;align-items:center;gap:9px;color:var(--ink);font-size:13px;font-weight:600;transition:.2s}.menu-button:hover{background:#fffaf4;border-color:#c7beb2}.menu-button svg{width:16px}
+    main{padding-top:44px}.eyebrow{display:flex;align-items:center;gap:9px;text-transform:uppercase;letter-spacing:.13em;font-size:11px;font-weight:700;color:var(--red)}.eyebrow:before{content:'';width:23px;height:1px;background:var(--red)}
+    h1{font:600 clamp(38px,5vw,62px)/1.04 'Playfair Display',serif;letter-spacing:-1.6px;margin:17px 0 12px}.intro{font-size:15px;color:var(--muted);margin:0;max-width:480px;line-height:1.6}
+    .stage{margin-top:35px;display:grid;grid-template-columns:1.08fr .92fr;min-height:420px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 12px 40px #50391b0a}
+    .portrait{position:relative;min-height:420px;background:#d9b8a4;overflow:hidden}.portrait svg{display:block;width:100%;height:100%;min-height:420px;object-fit:cover}.portrait-label{position:absolute;left:22px;bottom:20px;padding:8px 12px;border:1px solid #ffffff80;background:#fff9f0d9;border-radius:4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+    .console{padding:42px 45px 34px;display:flex;flex-direction:column;justify-content:center;position:relative}.status{display:flex;align-items:center;gap:8px;color:var(--olive);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700}.dot{width:7px;height:7px;border-radius:50%;background:#89926b;box-shadow:0 0 0 3px #89926b22}
+    .prompt{font:500 27px/1.35 'Playfair Display',serif;margin:27px 0 24px;min-height:108px;display:flex;align-items:center;transition:opacity .15s}.prompt.placeholder{color:#aaa49a;font-style:italic;font-size:22px}
+    .speak{height:55px;border:0;border-radius:4px;color:#fff;background:var(--red);font-weight:700;font-size:14px;letter-spacing:.01em;display:flex;align-items:center;justify-content:center;gap:11px;transition:transform .15s,background .2s,box-shadow .2s;box-shadow:0 5px 12px #c6504333}.speak:hover{background:#ad4036;transform:translateY(-1px);box-shadow:0 8px 17px #c6504338}.speak:active{transform:translateY(1px)}.speak svg{width:18px;height:18px}
+    .sub-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px}.repeat{background:none;border:0;padding:5px 0;color:var(--muted);font-size:12px;display:flex;align-items:center;gap:6px}.repeat:hover{color:var(--red)}.repeat svg{width:14px}.counter{font-size:11px;color:#99958d}
+    .rule{height:1px;background:var(--line);margin:25px 0 19px}.footnote{font-size:12px;line-height:1.55;color:#8a867e}.footnote strong{color:#5d5a53;font-weight:600}
+    .bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;font-size:11px;color:#9a958c}.bottom span:last-child{letter-spacing:.08em;text-transform:uppercase}
+    .shade{position:fixed;inset:0;background:#201d19a3;display:none;align-items:stretch;justify-content:flex-end;z-index:5}.shade.open{display:flex}.drawer{background:var(--paper);width:min(440px,100%);height:100%;padding:29px 30px;overflow:auto;box-shadow:-15px 0 45px #0002;animation:slide .22s ease-out}@keyframes slide{from{transform:translateX(20px);opacity:.7}to{transform:translateX(0);opacity:1}}
+    .drawer-head{display:flex;align-items:flex-start;justify-content:space-between}.drawer h2{font:600 32px 'Playfair Display',serif;margin:0 0 5px}.drawer-lead{font-size:13px;color:var(--muted);margin:0}.close{border:1px solid var(--line);background:transparent;width:36px;height:36px;border-radius:50%;font-size:20px;color:var(--muted);line-height:1}.close:hover{background:#fff}
+    .phrase-list{list-style:none;padding:0;margin:25px 0 23px;display:grid;gap:8px}.phrase-item{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;background:#fffdf9;border:1px solid var(--line);border-radius:4px;font-size:13px;gap:10px}.phrase-item button{border:0;background:transparent;color:#aaa49a;font-size:18px;padding:0 3px}.phrase-item button:hover{color:var(--red)}.phrase-item .built-in{visibility:hidden}.phrase-item:hover .built-in{visibility:visible}.phrase-item .built-in:disabled{cursor:default}
+    .add-title{font-size:13px;font-weight:700;margin-bottom:10px}.add-row{display:flex;gap:8px}.add-row input{min-width:0;flex:1;background:#fffdf9;border:1px solid var(--line);border-radius:4px;padding:12px 12px;outline:none;font-size:13px}.add-row input:focus{border-color:var(--red);box-shadow:0 0 0 3px #c6504317}.add-row button{border:0;border-radius:4px;background:var(--ink);color:#fff;padding:0 16px;font-weight:600;font-size:13px}.add-row button:hover{background:#45443d}.hint{font-size:11px;color:#9a958c;margin-top:9px}.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,12px);background:#292822;color:#fff;padding:11px 16px;border-radius:4px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:760px){.shell{padding:18px 18px 22px}header{height:48px}.top-note{display:none}main{padding-top:32px}.stage{grid-template-columns:1fr;margin-top:25px}.portrait,.portrait svg{min-height:270px;height:270px}.console{padding:28px 24px 25px}.prompt{min-height:78px;margin:18px 0}.bottom{padding-top:15px}.drawer{padding:24px 20px}}
+    @media(max-width:390px){h1{font-size:37px}.portrait,.portrait svg{min-height:235px;height:235px}.console{padding:24px 19px}.prompt{font-size:24px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><div class="brand-mark">д</div><span>Дома</span></div>
+      <div class="top-note">маленький семейный симулятор</div>
+      <button class="menu-button" id="openMenu" aria-haspopup="dialog" aria-controls="phraseDrawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Фразы <span id="menuCount">6</span></button>
+    </header>
+    <main>
+      <div class="eyebrow">Домашний разговор</div>
+      <h1>Ну что, поговорим?</h1>
+      <p class="intro">Никогда не знаешь, что будет сказано следующим. Нажми и послушай.</p>
+      <section class="stage" aria-label="Семейный симулятор">
+        <div class="portrait" role="img" aria-label="Задумчивая женщина скучает у окна">
+          <svg viewBox="0 0 680 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs><linearGradient id="wall" x2="1" y2="1"><stop stop-color="#e8d5c4"/><stop offset="1" stop-color="#c99e86"/></linearGradient><linearGradient id="light" x2="0" y2="1"><stop stop-color="#fcdda9" stop-opacity=".8"/><stop offset="1" stop-color="#f3bb91" stop-opacity=".16"/></linearGradient></defs>
+            <rect width="680" height="520" fill="url(#wall)"/><rect x="435" y="0" width="245" height="310" fill="#839298"/><rect x="451" y="15" width="101" height="280" fill="#d5d9d2"/><rect x="563" y="15" width="101" height="280" fill="#b9c9c4"/><path d="M557 0v306M435 151h245" stroke="#f0e6d9" stroke-width="11"/><rect x="435" y="0" width="245" height="310" fill="url(#light)"/><path d="M0 386h680v134H0z" fill="#796252"/><path d="M0 402q161-30 320 0t360 0v118H0z" fill="#a27b65"/>
+            <ellipse cx="306" cy="521" rx="172" ry="130" fill="#65726b"/><path d="M185 490q3-146 60-193 52-43 117-18 83 32 91 211z" fill="#465b53"/><path d="M220 345q-28 50-32 145h264q-4-102-37-151z" fill="#64786e"/>
+            <path d="M253 301q2-101 89-114 94 13 93 117l-12 98q-17 64-78 67-70-9-84-75z" fill="#d39b78"/>
+            <path d="M244 273q-10-113 91-137 95-8 119 89l-16 98q-10-57-40-77-47 13-118-18-8 40-30 62z" fill="#493b38"/><path d="M264 286q-26-20-30 8 2 32 36 35M427 288q25-21 29 8-3 31-34 34" fill="#c68c6e"/>
+            <path d="M282 300q17-13 34-1M361 298q17-12 34 0" stroke="#584139" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M289 300q14 10 25 0M369 299q14 10 25-1" stroke="#f0d8c5" stroke-width="3" fill="none"/><path d="M351 300q-1 35-12 47 8 8 21 3" fill="none" stroke="#a96e58" stroke-width="4" stroke-linecap="round"/><path d="M324 373q24-11 47 0" fill="none" stroke="#7f4b47" stroke-width="5" stroke-linecap="round"/><path d="M271 317q-3 18 2 34M411 316q4 17-1 34" stroke="#ca8d76" stroke-width="9" opacity=".55"/>
+            <path d="M266 269q39-27 79-6M356 263q33-22 60 3" stroke="#473632" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M309 403q32 20 64-2l18 42q-42 38-90-1z" fill="#c78e70"/><path d="M254 428q51 31 130 0l38 94H202z" fill="#f0e3d3"/>
+            <path d="M146 468q-43-69-81-58-27 10-19 42 13 45 63 58" fill="none" stroke="#d39b78" stroke-width="25" stroke-linecap="round"/><path d="M85 499q24-19 44-4" stroke="#d39b78" stroke-width="20" stroke-linecap="round"/>
+            <path d="M493 365h142v38H493z" fill="#e6d2b7"/><path d="M516 365v-49h99v49" fill="#9d755e"/><path d="M524 316q-12-52 17-66 37 10 30 66M574 316q-3-54 30-67 34 20 20 67" fill="#63745e"/><ellipse cx="565" cy="369" rx="107" ry="11" fill="#453b35" opacity=".18"/>
+          </svg>
+          <div class="portrait-label">Настроение: задумчивое</div>
+        </div>
+        <div class="console">
+          <div class="status"><span class="dot"></span><span id="statusText">Ждёт твоего внимания</span></div>
+          <div class="prompt placeholder" id="phrase" aria-live="polite">Здесь появится её фраза…</div>
+          <button class="speak" id="speakButton"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4z"/><path d="M17 9a5 5 0 0 1 0 6M19.5 6.5a9 9 0 0 1 0 11" stroke-linecap="round"/></svg>Что она скажет?</button>
+          <div class="sub-actions"><button class="repeat" id="repeatButton" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9a7 7 0 0 1 12-2L20 9M4 15l2.5 2a7 7 0 0 0 12-2"/></svg>Ещё раз</button><span class="counter"><span id="turnCount">0</span> фраз прозвучало</span></div>
+          <div class="rule"></div><div class="footnote"><strong>Маленький совет:</strong> включи звук, чтобы услышать фразы. Голос использует настройки русского языка твоего браузера.</div>
+        </div>
+      </section>
+    </main>
+    <footer class="bottom"><span>Играй с любовью и чувством юмора.</span><span>Семейная жизнь · выпуск 01</span></footer>
+  </div>
+  <div class="shade" id="shade" role="presentation">
+    <aside class="drawer" id="phraseDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <div class="drawer-head"><div><h2 id="drawerTitle">Её фразы</h2><p class="drawer-lead">Список того, что может прозвучать.</p></div><button class="close" id="closeMenu" aria-label="Закрыть">×</button></div>
+      <ul class="phrase-list" id="phraseList"></ul>
+      <div class="add-title">Добавить свою фразу</div>
+      <form class="add-row" id="addForm"><input id="newPhrase" maxlength="120" placeholder="Например: Ты вынес мусор?" aria-label="Новая фраза" required><button type="submit">Добавить</button></form>
+      <div class="hint">Новые фразы сохраняются на этом устройстве.</div>
+    </aside>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    const defaults = [
+      'Ты меня не любишь.',
+      'Я хочу шубу.',
+      'Давай съездим к моей маме.',
+      'Дай мне денег.',
+      'Я отдала тебе лучшие годы своей жизни.',
+      'Мама была права насчёт тебя.'
+    ];
+    const storageKey = 'doma-custom-phrases-v1';
+    let custom = [];
+    try { custom = JSON.parse(localStorage.getItem(storageKey) || '[]'); if (!Array.isArray(custom)) custom = []; } catch { custom = []; }
+    let currentPhrase = '';
+    let turns = 0;
+    let lastIndex = -1;
+    const $ = (id) => document.getElementById(id);
+    const phraseEl = $('phrase');
+    const allPhrases = () => [...defaults, ...custom];
+
+    function updateList() {
+      const list = $('phraseList');
+      list.innerHTML = '';
+      allPhrases().forEach((text, index) => {
+        const li = document.createElement('li'); li.className = 'phrase-item';
+        const label = document.createElement('span'); label.textContent = text;
+        const remove = document.createElement('button'); remove.type = 'button'; remove.setAttribute('aria-label', index < defaults.length ? 'Стандартная фраза' : 'Удалить фразу');
+        remove.textContent = index < defaults.length ? '·' : '×';
+        if (index < defaults.length) { remove.className = 'built-in'; remove.disabled = true; }
+        else remove.addEventListener('click', () => { custom.splice(index - defaults.length, 1); persist(); updateList(); showToast('Фраза удалена'); });
+        li.append(label, remove); list.append(li);
+      });
+      $('menuCount').textContent = allPhrases().length;
+    }
+    function persist() { try { localStorage.setItem(storageKey, JSON.stringify(custom)); } catch { showToast('Не удалось сохранить фразу'); } }
+    function say(text) {
+      if (!text) return;
+      currentPhrase = text;
+      phraseEl.textContent = text; phraseEl.classList.remove('placeholder');
+      $('repeatButton').disabled = false;
+      $('statusText').textContent = 'Слушай внимательно…';
+      turns += 1; $('turnCount').textContent = turns;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'ru-RU'; utterance.rate = 0.92; utterance.pitch = 1.02;
+        utterance.onend = () => { $('statusText').textContent = 'Снова ждёт твоего внимания'; };
+        utterance.onerror = () => { $('statusText').textContent = 'Фраза на экране'; };
+        window.speechSynthesis.speak(utterance);
+      } else { $('statusText').textContent = 'Фраза на экране'; showToast('Озвучивание не поддерживается этим браузером'); }
+    }
+    $('speakButton').addEventListener('click', () => {
+      const phrases = allPhrases();
+      if (phrases.length > 1) { let index; do { index = Math.floor(Math.random() * phrases.length); } while (index === lastIndex); lastIndex = index; say(phrases[index]); }
+      else say(phrases[0]);
+    });
+    $('repeatButton').addEventListener('click', () => say(currentPhrase));
+    const shade = $('shade');
+    function openMenu() { shade.classList.add('open'); $('newPhrase').focus(); }
+    function closeMenu() { shade.classList.remove('open'); $('openMenu').focus(); }
+    $('openMenu').addEventListener('click', openMenu); $('closeMenu').addEventListener('click', closeMenu);
+    shade.addEventListener('click', (event) => { if (event.target === shade) closeMenu(); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && shade.classList.contains('open')) closeMenu(); });
+    $('addForm').addEventListener('submit', (event) => {
+      event.preventDefault(); const input = $('newPhrase'); const text = input.value.trim();
+      if (!text) return;
+      if (allPhrases().some((phrase) => phrase.toLocaleLowerCase() === text.toLocaleLowerCase())) { showToast('Такая фраза уже есть'); return; }
+      custom.push(text); persist(); updateList(); input.value = ''; input.focus(); showToast('Фраза добавлена');
+    });
+    let toastTimer;
+    function showToast(message) { const toast = $('toast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2200); }
+    updateList();
+  </script>
+</body>
+</html>
